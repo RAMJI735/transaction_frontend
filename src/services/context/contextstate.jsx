@@ -1,8 +1,7 @@
 import axios from "axios";
 import { createContext, useContext, useState } from "react";
-import dotenv from "dotenv"
-dotenv.config();
 
+const base_url= import.meta.env.VITE_SERVER_URL;
 // Create the context
 const TransactionContext = createContext();
 
@@ -18,7 +17,7 @@ const TransactionProvider = ({ children }) => {
       const headers = {
         "Content-Type": "application/json",
       }
-      const response = await axios.post(`${process.env.SERVER}/auth/google`, data, { headers });
+      const response = await axios.post(`${base_url}/auth/google`, data, { headers });
       return response.data;
       
     } catch (error) {
@@ -36,7 +35,7 @@ const TransactionProvider = ({ children }) => {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${havetoken}`
       }
-      const response = await axios.post("addTransaction", description, { headers });
+      const response = await axios.post(`${base_url}/addTransaction`, description, { headers });
       return response.data;
       
     } catch (error) {
@@ -53,7 +52,7 @@ const TransactionProvider = ({ children }) => {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${havetoken}`
       }
-      const response = await axios.get(`${process.env.SERVER}/getTransaction`,  { headers });
+      const response = await axios.get(`${base_url}/getTransaction`,  { headers });
       return response.data;
       
     } catch (error) {
@@ -69,7 +68,7 @@ const TransactionProvider = ({ children }) => {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${havetoken}`
       }
-      const response = await axios.put(`${process.env.SERVER}/updateTransaction`, data, { headers });
+      const response = await axios.put(`${base_url}/updateTransaction`, data, { headers });
       return response.data;
       
     } catch (error) {
@@ -85,7 +84,7 @@ const TransactionProvider = ({ children }) => {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${havetoken}`
       }
-      const response = await axios.delete(`${process.env.SERVER}/${id}`, { headers });
+      const response = await axios.delete(`${base_url}/${id}`, { headers });
       return response.data;
       
     } catch (error) {
