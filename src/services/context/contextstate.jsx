@@ -1,5 +1,7 @@
 import axios from "axios";
 import { createContext, useContext, useState } from "react";
+import dotenv from "dotenv"
+dotenv.config();
 
 // Create the context
 const TransactionContext = createContext();
@@ -16,7 +18,7 @@ const TransactionProvider = ({ children }) => {
       const headers = {
         "Content-Type": "application/json",
       }
-      const response = await axios.post("http://localhost:4000/auth/google", data, { headers });
+      const response = await axios.post(`${process.env.SERVER}/auth/google`, data, { headers });
       return response.data;
       
     } catch (error) {
@@ -34,7 +36,7 @@ const TransactionProvider = ({ children }) => {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${havetoken}`
       }
-      const response = await axios.post("http://localhost:4000/addTransaction", description, { headers });
+      const response = await axios.post("addTransaction", description, { headers });
       return response.data;
       
     } catch (error) {
@@ -51,7 +53,7 @@ const TransactionProvider = ({ children }) => {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${havetoken}`
       }
-      const response = await axios.get("http://localhost:4000/getTransaction",  { headers });
+      const response = await axios.get(`${process.env.SERVER}/getTransaction`,  { headers });
       return response.data;
       
     } catch (error) {
@@ -67,7 +69,7 @@ const TransactionProvider = ({ children }) => {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${havetoken}`
       }
-      const response = await axios.put("http://localhost:4000/updateTransaction", data, { headers });
+      const response = await axios.put(`${process.env.SERVER}/updateTransaction`, data, { headers });
       return response.data;
       
     } catch (error) {
@@ -83,7 +85,7 @@ const TransactionProvider = ({ children }) => {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${havetoken}`
       }
-      const response = await axios.delete(`http://localhost:4000/${id}`, { headers });
+      const response = await axios.delete(`${process.env.SERVER}/${id}`, { headers });
       return response.data;
       
     } catch (error) {

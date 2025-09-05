@@ -4,11 +4,13 @@ import './index.css'
 import App from './App.jsx'
 import { Auth0Provider } from '@auth0/auth0-react'
 import TransactionProvider from './services/context/contextstate.jsx'
+import dotenv from dotenv
+dotenv.config();
 
 createRoot(document.getElementById('root')).render(
  <Auth0Provider
-    domain="dev-z0k101s243kzty6i.us.auth0.com"
-    clientId="Yo99rmxOYVzD27fxFak3hChtcj8n9IC0"
+    domain={process.env.auth-domain}
+    clientId={process.env.auth_client}
     authorizationParams={{
       redirect_uri: window.location.origin
     }}

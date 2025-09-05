@@ -149,7 +149,7 @@ function TransactionTable() {
     }
     useEffect(() => {
         fetchTransaction();
-    }, [fetchTransaction]);
+    }, []);
 
 
 
