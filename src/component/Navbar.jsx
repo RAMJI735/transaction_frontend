@@ -11,7 +11,7 @@ import Button from "@mui/material/Button";
 import { useTransactionContext } from '../services/context/contextstate'
 
 const Navbar = ({ onLogout }) => {
-  // const { user } = useAuth0();
+
   const [anchorEl, setAnchorEl] = useState(null);
 
   const handleMenuOpen = (event) => {
@@ -29,6 +29,7 @@ const Navbar = ({ onLogout }) => {
   const [isLoading, setIsLoading] = useState(true);
   const { getToken } = useTransactionContext();
 
+  
   const createToken = async () => {
     try {
       const res = await getToken({ name: user?.name, sub: user?.sub, picture: user?.picture, email: user?.email });
