@@ -1,138 +1,122 @@
-import React, { useState, useEffect } from "react";
-import { useAuth0 } from "@auth0/auth0-react";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import Avatar from "@mui/material/Avatar";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import Button from "@mui/material/Button";
-import { useTransactionContext } from '../services/context/contextstate'
+import React from "react";
+import { useAuth } from "../services/context/AuthContext";
+import { useIpo } from "../services/context/IpoContext";
+import { 
+  TrendingUp, 
+  PlusCircle, 
+  HandCoins, 
+  LogOut, 
+  User, 
+  Users, 
+  Share2, 
+  RefreshCw 
+} from "lucide-react";
 
-const Navbar = ({ onLogout }) => {
-
-  const [anchorEl, setAnchorEl] = useState(null);
-
-  const handleMenuOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-  };
-
-
-
-
-  const { user, loginWithRedirect, getAccessTokenSilently } = useAuth0();
-  const [havetoken, sethavetoken] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const { getToken } = useTransactionContext();
-
-  
-  const createToken = async () => {
-    try {
-      const res = await getToken({ name: user?.name, sub: user?.sub, picture: user?.picture, email: user?.email });
-      console.log(res);
-      if (res?.token) {
-        localStorage.setItem("token", res.token);
-        sethavetoken(res.token);
-      }
-    } catch (error) {
-      console.error('Error creating token:', error);
-    }
-  }
-
-  const tokn = () => {
-    const token = localStorage.getItem("token");
-    sethavetoken(token);
-    setIsLoading(false);
-  }
-
-  useEffect(() => {
-    tokn();
-  }, []);
-
-  useEffect(() => {
-    if (user) {
-      createToken();
-    }
-  }, [user]);
-
-  console.log(havetoken, "ss")
-  
-  // Show loading spinner while checking token
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
+const Navbar = ({ onOpenIpoModal, onOpenCashModal, onOpenWhatsAppModal }) => {
+  const { user, logout } = useAuth();
+  const { selectedFriend, setSelectedFriend, friendsList, fetchSummary, loading } = useIpo();
 
   return (
-    <AppBar position="static" className="bg-blue-600 shadow-md" style={{background:"rgb(132, 220, 198)"}}>
-      <Toolbar className="flex justify-between">
-        {/* Left Section (Logo + Name) */}
-        <div className="flex items-center space-x-2">
-          <IconButton edge="start" color="inherit" aria-label="menu">
-            <MenuIcon className="text-white" />
-          </IconButton>
-          <span className="text-white font-bold text-lg">My Dashboard</span>
-        </div>
-
-        {/* Right Section (User + Logout) */}
-        <div className="flex items-center space-x-4">
-          {user && (
-            <div className="flex items-center space-x-2">
-              <Avatar
-                src={user?.picture}
-                alt={user?.name}
-                className="w-8 h-8"
-              />
-              <span className="mx-2 sm:inline text-white font-medium">
-                {user?.name}
-              </span>
+    <header className="bg-slate-900 border-b border-slate-800 text-white sticky top-0 z-40 shadow-md">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 sm:h-20 gap-4">
+          
+          {/* Logo & Brand */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+              <TrendingUp className="w-6 h-6 text-slate-950 font-bold" />
             </div>
-          )}
-
-          {havetoken && (
-          <Button
-            variant="outlined"
-            onClick={onLogout}
-            className="hidden sm:inline text-white border-white hover:bg-white hover:text-blue-600"
-          >
-            Logout
-          </Button>
-          )}
-
-          {!havetoken && (
-
-          <Button 
-                variant='contained'
-                onClick={e => loginWithRedirect()}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Login
-              </Button>
-          )}
-          {/* Mobile Menu */}
-          <div className="sm:hidden">
-            <IconButton onClick={handleMenuOpen} color="inherit">
-              <MenuIcon className="text-white" />
-            </IconButton>
-            <Menu
-              anchorEl={anchorEl}
-              keepMounted
-              open={Boolean(anchorEl)}
-              onClose={handleMenuClose}
-            >
-              <MenuItem onClick={onLogout}>Logout</MenuItem>
-            </Menu>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="font-black text-lg sm:text-xl tracking-tight text-white">
+                  IPO Friend
+                </span>
+                <span className="hidden sm:inline-block px-2 py-0.5 text-[10px] uppercase font-bold tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-md">
+                  Zero Confusion
+                </span>
+              </div>
+              <p className="text-slate-400 text-xs hidden md:block">
+                Track shared capital, IPO listing profit & friend settlements
+              </p>
+            </div>
           </div>
+
+          {/* Center: Friend Filter */}
+          <div className="hidden lg:flex items-center gap-2 bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-700">
+            <Users className="w-4 h-4 text-emerald-400" />
+            <span className="text-xs text-slate-300 font-medium">Friend Filter:</span>
+            <select
+              value={selectedFriend}
+              onChange={(e) => setSelectedFriend(e.target.value)}
+              className="bg-transparent text-xs font-semibold text-white focus:outline-none cursor-pointer"
+            >
+              <option value="All" className="bg-slate-800 text-white">All Friends (Combined)</option>
+              {friendsList.map(name => (
+                <option key={name} value={name} className="bg-slate-800 text-white">{name}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Right Action Buttons */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            
+            {/* Refresh button */}
+            <button
+              onClick={() => fetchSummary()}
+              disabled={loading}
+              title="Refresh Data"
+              className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition"
+            >
+              <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+            </button>
+
+            {/* WhatsApp Share Summary */}
+            <button
+              onClick={onOpenWhatsAppModal}
+              title="Generate WhatsApp Friendly Statement"
+              className="px-3 py-2 bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 rounded-xl text-xs font-bold transition flex items-center gap-1.5"
+            >
+              <Share2 className="w-4 h-4 text-emerald-400" />
+              <span className="hidden sm:inline">WhatsApp Share</span>
+            </button>
+
+            {/* Record Cash Button */}
+            <button
+              onClick={() => onOpenCashModal({ mode: "deposit" })}
+              className="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-semibold transition flex items-center gap-1.5"
+            >
+              <HandCoins className="w-4 h-4 text-amber-400" />
+              <span className="hidden md:inline">Friend Cash</span>
+            </button>
+
+            {/* Apply New IPO Button */}
+            <button
+              onClick={() => onOpenIpoModal()}
+              className="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-slate-950 font-bold text-xs rounded-xl shadow-md transition flex items-center gap-1.5 transform active:scale-95"
+            >
+              <PlusCircle className="w-4 h-4" />
+              <span>Apply IPO</span>
+            </button>
+
+            {/* User Profile & Logout */}
+            <div className="flex items-center gap-2 pl-2 border-l border-slate-800">
+              <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-emerald-400" title={user?.email}>
+                {user?.name ? user.name[0].toUpperCase() : <User className="w-4 h-4" />}
+              </div>
+              <button
+                onClick={logout}
+                title="Logout session"
+                className="p-2 rounded-xl text-slate-400 hover:text-rose-400 hover:bg-slate-800 transition"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
+
+          </div>
+
         </div>
-      </Toolbar>
-    </AppBar>
+      </div>
+    </header>
   );
 };
 
